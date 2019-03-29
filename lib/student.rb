@@ -29,21 +29,14 @@ def self.create_table
   end 
   
   def save 
-    sql = <<-SQL
-    SQL 
+   sql =  <<-SQL
+      INSERT INTO students (name,grade) VALUES (?,?)
+      INSERT INTO students (name,grade) VALUES (?,?)
+        SQL
+        binding.pry 
+     DB[:conn].exectue(sql,self.name,self.grade)
+    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM students")[0][0]
   end 
-  # def save 
-  #   sql = <<-SQL 
-  #     SQL 
-  #   # sql = <<-SQL
-  #   #   INSERT INTO students (name,grade) VALUES (?,?)
-  #   #   SQL 
-  #   #   binding.pry 
-  #   #   DB[:conn].exectue(sql,self.name,self.grade)
-  #   #   @id = DB[:conn].execute("SELECT last_insert_rowid() FROM students")[0][0]
-  #   # end 
-    
-  # end 
    
 end 
 
