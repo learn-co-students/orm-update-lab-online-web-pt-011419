@@ -1,11 +1,12 @@
 require_relative "../config/environment.rb"
-
+require 'pry'
 class Student
 
  attr_accessor :name, :grade
  attr_reader :id 
  
- def initialize(name, grade, id = nil)
+ def initialize(id = nil, name, grade)
+   
    @name = name 
    @grade = grade 
    @id = id 
@@ -46,26 +47,32 @@ class Student
    end
   end
 
-  def self.create(name:, grade:)
+  def self.create(name, grade)
     student = Student.new(name, grade)
-    students.save
+    student.save
     student
   end 
   
   def self.new_from_db(row)
-    student = Student.new
-    student.id = row[0]
-    student.name = row[1] 
-    student.grade = row[2]
+    student = Student.new(row[0], row[1], row[2])
+    
   end 
   
+ 
   def self.find_by_name(name)
-    
-  end 
-  
+    sql = "SELECT * FROM students WHERE name = ?"
+    result = DB[:conn].execute(sql, name)[0]
+    Student.new(result[0], result[1], result[2])
+  end
+
   def update
-    sql = "UPDATE students set name = ?, set grade = ? WHERE id = ?"
-    
+      sql = <<-SQL
+      UPDATE students
+      SET name = ?, grade = ?
+      WHERE id = ?
+    SQL
+
     DB[:conn].execute(sql, self.name, self.grade, self.id)
-  end 
+  end
+     
 end
